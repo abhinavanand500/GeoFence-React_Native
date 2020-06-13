@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
 import App from './App';
-import Login from './components/Login';
+import Login1 from './components/Login1';
 import Splash from './components/Splash';
 import {name as appName} from './app.json';
 
@@ -12,12 +12,12 @@ class Main extends Component {
         // console.log('Start doing some tasks for about 3 seconds')
         setTimeout(()=>{
             // console.log('Done some tasks for about 3 seconds')
-            this.setState({ currentScreen: 'Login' })
+            this.setState({ currentScreen: 'Login1' })
         }, 3000)
     }
     render() {
         const { currentScreen } = this.state
-        let mainScreen = currentScreen === 'Splash' ? <Splash /> : <Login />
+        let mainScreen = currentScreen === 'Splash' ? <Splash /> : <Login1 />
         return mainScreen
     }
 }

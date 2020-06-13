@@ -21,7 +21,6 @@ export default class Login extends Component {
     }
     updateValue(text,field)
     {
-        // console.warn(text);
         if(field=='email')
         {
             this.setState({
@@ -39,60 +38,44 @@ export default class Login extends Component {
     
     submit()
     {   
-        let collection={}
+        var collection={}
+        Geolocation.getCurrentPosition(
+            (position) => {
+                console.log(position);
+                collection.mac = DeviceInfo.getMacAddress().then(),
+                collection.uq = DeviceInfo.getUniqueId();
+                collection.usn=this.state.email,
+                collection.password=this.state.password,
+                collection.lat=position.coords.latitude;
+                collection.long=position.coords.longitude;
+                fetch(`http://abhinavanand500.pythonanywhere.com/writedata`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(collection),
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                alert(data['message']);
+                })
+                .catch((error) => {
+                    alert(error);
+                console.error('Error:', error);
+                });
 
-        var options = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-          };
-          
-          function success(pos) {
-            var crd;
-            crd= pos.coords;
-            // // window.lat1=crd.latitude;
-            // window.long1=crd.longitude;
-            // console.warn('Your current position is:');
-            // console.warn(`Latitude : ${crd.latitude}`);
-            // console.warn(`Longitude: ${crd.longitude}`);
-            // alert(`More or less ${crd.accuracy} meters.`);
-            window.lat1=crd.latitude;
-            window.long1=crd.longitude;
-          }
-          
-          function error(err) {
-            console.warn(`ERROR(${err.code}): ${err.message}`);
-          }
-          
-          Geolocation.getCurrentPosition(success, error, options);
-            collection.mac = DeviceInfo.getMacAddress().then(),
-            collection.usn=this.state.email,
-            collection.password=this.state.password,
-            collection.long=window.lat1,
-            collection.lat=window.long1,
-            fetch(`http://abhinavanand500.pythonanywhere.com/writedata`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(collection),
-            })
-            .then((response) => response.json())
-            .then((data) => {
-              alert(data['message']);
-            })
-            .catch((error) => {
-                alert(error);
-              console.error('Error:', error);
-            });
+            },
+            (error) => {
+                console.log(error.code, error.message);
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
     }
     render() {
         return (
-            // <Image source={require('../images/logo')} style={styles.backgroundImage} />
             <SafeAreaView style={styles.container}>
                 <StatusBar barStyle="light-content" />
                 <KeyboardAvoidingView keyboardVerticalOffset={-100} style = { styles.container }>
-                {/* <KeyboardAvoidingView behavior='padding' style={styles.container}> */}
                     <TouchableWithoutFeedback style={styles.container} 
                             onPress={Keyboard.dismiss}>
                         <View style={styles.logoContainer}>
@@ -100,34 +83,27 @@ export default class Login extends Component {
                                 <Image style={styles.logo}
                                     source={require('../images/aaa.jpg')}>
                                 </Image>
-                                {/* <Text style={styles.title}>Account Information</Text> */}
                             </View>
                             <View style={styles.infoContainer}>
-                                {/* <form noValidate onSubmit={this.onSubmit()}> */}
                                 <TextInput style={styles.input}
                                     placeholder="USN"
-                                    // value = {this.state.email}
                                     placeholderTextColor='rgba(255,255,255,0.8)'
                                     keyboardType='email-address'
                                     returnKeyType='next'
                                     onChangeText={(text)=>this.updateValue(text,'email')}
                                     autoCorrect={false}
-                                    // onSubmitEditing={()=> this.refs.txtPassword.focus()}
                                 />
                                 <TextInput style={styles.input} 
                                     placeholder="Password"
                                     placeholderTextColor='rgba(255,255,255,0.8)'
-                                    // returnKeyType='go'
                                     secureTextEntry
                                     autoCorrect={false}
                                     onChangeText={(text)=>this.updateValue(text,'password')}
-                                    // ref={"txtPassword"}
                                 />
                                 <TouchableOpacity onPress ={() => this.submit()}
                                     style={styles.buttonContainer}>
                                     <Text style={styles.buttonText}>MARK YOUR ATTENDANCE</Text>
                                 </TouchableOpacity>
-                                {/* </form> */}
                             </View>
                         </View>
                     </TouchableWithoutFeedback>
